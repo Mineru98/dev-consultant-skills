@@ -1,7 +1,7 @@
 {
   "name": "dev-consultant",
-  "version": "1.1.0",
-  "description": "Web application development consulting plugin with specialized agents for requirements gathering, UI/UX design, technical specification, and project planning",
+  "version": "2.0.0",
+  "description": "Multi-platform application development consulting plugin with specialized agents for web apps, Tauri desktop apps, mobile PWAs, and Chrome extensions",
   "author": {
     "name": "Mineru",
     "email": "mineru@usefullabs.co.kr",
@@ -12,6 +12,10 @@
   "license": "GPL-3.0",
   "keywords": [
     "multi-agent",
-    "orchestration"
+    "orchestration",
+    "tauri",
+    "pwa",
+    "chrome-extension",
+    "mobile-web"
   ]
 }
