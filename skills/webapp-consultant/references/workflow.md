@@ -4,110 +4,116 @@ Complete workflow for transforming vague requirements into detailed specificatio
 
 ## Phase 1: Discovery (Interviewer)
 
-**Goal**: Extract clear requirements from vague customer input
+**Goal**: Extract clear requirements from vague input
+**Output**: `.shared/01-requirements.md`
 
 **Process**:
-1. Start with open-ended questions about the problem
-2. Dig deeper with follow-up questions
-3. Confirm understanding by repeating back
+1. Start with open-ended questions
+2. Dig deeper with follow-ups
+3. Confirm understanding
 4. Document all requirements
-
-**Output**: Requirements document with:
-- Problem statement
-- Target users
-- Core features (must-have)
-- Nice-to-have features
-- Constraints and limitations
 
 ## Phase 2: Visualization (UI Sketcher)
 
 **Goal**: Create ASCII wireframes from requirements
+**Output**: `.shared/02-wireframes.md`
 
 **Process**:
-1. Identify main screens/views
+1. Identify main screens
 2. Sketch layout structure
-3. Add UI elements (buttons, inputs, lists)
-4. Annotate with Tailwind class hints
-5. Note interaction points
+3. Add UI elements
+4. Annotate with Tailwind hints
 
-**Output**: ASCII wireframes for each screen
-
-## Phase 3: Documentation (Documentation Writer)
+## Phase 3: Documentation (UX Spec Writer)
 
 **Goal**: Create comprehensive spec with UX philosophy
+**Output**: `.shared/03-ux-specification.md`
 
 **Process**:
 1. Transform requirements into user stories
 2. Connect wireframes to UX principles (Norman/Nielsen)
 3. Document acceptance criteria
-4. Explain design rationale philosophically
 
-**Output**: Markdown specification document
-
-## Phase 4: Technical Research (Tech Researcher)
+## Phase 4: Technical Research (Client Tech Architect)
 
 **Goal**: Define data architecture and storage patterns
+**Output**: `.shared/04-tech-architecture.md`
 
 **Process**:
 1. Design localbase collections
 2. Define repository pattern classes
 3. Document CRUD operations
-4. Plan file storage (if needed)
-
-**Output**: Technical specification with code examples
 
 ## Phase 5: Flow Design (Mermaid Designer)
 
-**Goal**: Visualize user journeys and system flows
+**Goal**: Visualize user journeys
+**Output**: `.shared/05-flow-diagrams.md`
 
 **Process**:
-1. Map user journeys from requirements
-2. Create flowcharts for key processes
-3. Document decision points and error paths
-4. Generate Mermaid code
-
-**Output**: Mermaid diagrams for all flows
+1. Map user journeys
+2. Create flowcharts
+3. Document decision points
 
 ## Phase 6: Interaction Design (Interactive Designer)
 
 **Goal**: Define animations and micro-interactions
+**Output**: `.shared/06-animations.md`
 
 **Process**:
-1. Identify interaction points from wireframes
+1. Identify interaction points
 2. Design hover/focus/active states
-3. Plan transitions and animations
-4. Write Tailwind animation code
-
-**Output**: Animation specifications with code
+3. Write Tailwind animation code
 
 ## Phase 7: Planning (Planner)
 
 **Goal**: Create development roadmap
+**Output**: `.shared/07-roadmap.md`
 
 **Process**:
 1. Apply MoSCoW to features
-2. Calculate RICE scores
-3. Create WBS breakdown
-4. Define phases and milestones
-5. Identify dependencies
+2. Create WBS breakdown
+3. Define phases and milestones
 
-**Output**: Project roadmap with priorities
+## Phase 8: Quality Assurance (Browser QA)
+
+**Goal**: Verify implementation quality
+**Output**: `.shared/08-qa-report.md`
+
+**Process**:
+1. Test all functional flows
+2. Verify responsive layouts
+3. Check accessibility
+4. Document issues
 
 ## Parallel Execution
 
-Some phases can run in parallel:
-
 ```
 Sequential:
-Interviewer → UI Sketcher → Documentation Writer
+Interviewer → UI Sketcher → UX Spec Writer
 
-Parallel after wireframes:
-├── Tech Researcher
+Parallel (after UX Spec Writer):
+├── Client Tech Architect
 ├── Mermaid Designer
 └── Interactive Designer
 
 Final:
-Planner (needs all outputs)
+Planner → Browser QA (needs running app)
+```
+
+## .shared Folder Structure
+
+All outputs go to `.shared/` in target repository:
+
+```
+.shared/
+├── 01-requirements.md      # Interviewer
+├── 02-wireframes.md        # UI Sketcher
+├── 03-ux-specification.md  # UX Spec Writer
+├── 04-tech-architecture.md # Client Tech Architect
+├── 05-flow-diagrams.md     # Mermaid Designer
+├── 06-animations.md        # Interactive Designer
+├── 07-roadmap.md           # Planner
+└── 08-qa-report.md         # Browser QA
 ```
 
 ## Handoff Checklist
@@ -115,6 +121,25 @@ Planner (needs all outputs)
 Before moving to next phase:
 
 - [ ] Current phase output complete
+- [ ] Output saved to `.shared/` folder
 - [ ] Output reviewed for completeness
-- [ ] Questions from next phase addressed
 - [ ] Context documented for handoff
+
+## Dependency Graph
+
+```
+01-requirements
+       ↓
+02-wireframes
+       ↓
+03-ux-specification
+       ↓
+    ┌──┼──┐
+    ↓  ↓  ↓
+   04 05 06
+    └──┼──┘
+       ↓
+07-roadmap
+       ↓
+08-qa-report (needs running app)
+```
