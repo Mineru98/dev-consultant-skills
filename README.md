@@ -1,351 +1,269 @@
 # Dev Consultant Plugin
 
-Web application development consulting plugin for Claude Code with specialized agents for requirements gathering, UI/UX design, technical specification, and project planning.
+모호한 고객 요구사항을 상세한 웹 애플리케이션 명세서로 변환하는 Claude Code 플러그인입니다.
 
 ## Overview
 
-Dev Consultant transforms vague customer requirements into detailed, actionable specifications for web applications. It orchestrates 7 specialized agents through a structured workflow, producing comprehensive documentation from initial concept to development roadmap.
+**8개의 전문화된 에이전트**가 구조화된 워크플로우를 통해 초기 컨셉부터 QA 리포트까지 포괄적인 문서를 생성합니다.
 
-Perfect for planning **HTML + Tailwind CSS + vanilla JavaScript** web applications with client-side storage (LocalStorage + IndexedDB).
+**타겟 기술 스택**: HTML + Tailwind CSS + 바닐라 JavaScript (클라이언트 전용)
 
-## Plugin Structure
+## Project Structure
 
 ```
 dev-consultant/
-├── .claude-plugin/
-│   └── plugin.json           # Plugin configuration
-├── agents/
-│   ├── interviewer.md        # Requirements extraction
-│   ├── ui-sketcher.md        # ASCII wireframe generation
-│   ├── documentation-writer.md # Technical specifications
-│   ├── tech-researcher.md    # Data architecture design
-│   ├── mermaid-designer.md   # Flow diagram creation
-│   ├── interactive-designer.md # Animation specifications
-│   └── planner.md            # Project roadmap planning
+├── agents/                          # 8개 에이전트
+│   ├── interviewer/AGENT.md         # 요구사항 추출
+│   ├── ui-sketcher/AGENT.md         # ASCII 와이어프레임
+│   ├── ux-spec-writer/AGENT.md      # UX 명세서
+│   ├── client-tech-architect/AGENT.md # 기술 아키텍처
+│   ├── mermaid-designer/AGENT.md    # 플로우 다이어그램
+│   ├── interactive-designer/AGENT.md # 애니메이션 명세
+│   ├── planner/AGENT.md             # 프로젝트 계획
+│   └── browser-qa/AGENT.md          # 브라우저 QA
 ├── skills/
 │   └── webapp-consultant/
-│       ├── SKILL.md          # Main skill definition
-│       ├── references/       # Reference materials
-│       │   ├── workflow.md
-│       │   ├── interview-patterns.md
-│       │   ├── ascii-art-guide.md
-│       │   ├── localbase-guide.md
-│       │   ├── ux-philosophy.md
-│       │   ├── mermaid-patterns.md
-│       │   ├── tailwind-animations.md
-│       │   └── planning-methods.md
-│       └── assets/
-│           └── planning-template.md
-├── LICENSE
-└── README.md
+│       ├── SKILL.md                 # 스킬 정의
+│       └── references/              # 레퍼런스 (14개)
+└── .claude-plugin/
+    └── plugin.json
 ```
 
-## 7 Specialized Agents
+## 8 Specialized Agents
 
-### 1. **Interviewer**
-Extracts clear requirements from vague customer input through persistent questioning.
+| # | Agent | Output | Purpose |
+|---|-------|--------|---------|
+| 1 | **Interviewer** | `01-requirements.md` | 모호한 요구사항에서 명확한 요구사항 추출 |
+| 2 | **UI Sketcher** | `02-wireframes.md` | ASCII 와이어프레임 + Tailwind 힌트 |
+| 3 | **UX Spec Writer** | `03-ux-specification.md` | UX 철학 (Norman/Nielsen) 통합 명세 |
+| 4 | **Client Tech Architect** | `04-tech-architecture.md` | 데이터 모델 + Repository 패턴 |
+| 5 | **Mermaid Designer** | `05-flow-diagrams.md` | 사용자 플로우 다이어그램 |
+| 6 | **Interactive Designer** | `06-animations.md` | Tailwind 애니메이션 명세 |
+| 7 | **Planner** | `07-roadmap.md` | MoSCoW/RICE 우선순위 + 로드맵 |
+| 8 | **Browser QA** | `08-qa-report.md` | Chrome 자동화 QA 테스트 |
 
-**Triggers**: Vague requirements, unclear scope, undefined user personas
-
-**Output**: Requirements document with problem statement, target users, must-have features, constraints
-
-### 2. **UI Sketcher**
-Generates ASCII wireframes showing layout and UI components.
-
-**Triggers**: "Show me the layout", feature description needs visual representation
-
-**Output**: ASCII wireframes with Tailwind class hints and UX annotations
-
-### 3. **Documentation Writer**
-Creates comprehensive technical specifications with UX philosophy integration.
-
-**Triggers**: Wireframes complete, need detailed documentation
-
-**Output**: Markdown spec with user stories, UX analysis (Norman/Nielsen principles), acceptance criteria
-
-### 4. **Tech Researcher**
-Designs data architecture and storage patterns for client-side applications.
-
-**Triggers**: Data storage questions, repository pattern needs
-
-**Output**: Technical architecture with localbase collections, repository classes, code examples
-
-### 5. **Mermaid Designer**
-Creates flowcharts and diagrams using Mermaid.js with semantic coloring.
-
-**Triggers**: "Show me the flow", process needs visualization
-
-**Output**: Mermaid diagrams for user flows, CRUD operations, state transitions
-
-### 6. **Interactive Designer**
-Specifies Tailwind animations and micro-interactions.
-
-**Triggers**: Animation needs, interaction design specification
-
-**Output**: Animation specs with Tailwind code for buttons, cards, modals, loading states
-
-### 7. **Planner**
-Creates prioritized development roadmaps with MoSCoW/RICE/Kano frameworks.
-
-**Triggers**: "What should we build first?", prioritization needed
-
-**Output**: Project roadmap with phase breakdown, WBS, critical path, milestones
-
-## Agent Workflow
+## Workflow
 
 ```
-Customer Request (vague)
-         ↓
-   Interviewer ← Persistent questioning
-         ↓
-   UI Sketcher → ASCII wireframes
-         ↓
-   Documentation Writer → Markdown spec with UX philosophy
-         ↓
-  ┌──────┴──────┬──────────────┐
-  ↓             ↓              ↓
-Tech Researcher  Mermaid       Interactive
-  (Data)         Designer      Designer
-                 (Flows)       (Animations)
-  └──────┬──────┴──────────────┘
-         ↓
-      Planner → Final roadmap
-         ↓
-   Complete Specification
+┌────────────────────────────────────────────────────────────────┐
+│                      고객 요청 (모호)                            │
+└───────────────────────────┬────────────────────────────────────┘
+                            ↓
+┌────────────────────────────────────────────────────────────────┐
+│  Phase 1: Discovery (순차)                                      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │ Interviewer  │→│ UI Sketcher  │→│ UX Spec Writer│          │
+│  │ (요구사항)    │  │ (와이어프레임) │  │ (UX 명세)     │          │
+│  └──────────────┘  └──────────────┘  └──────────────┘          │
+└───────────────────────────┬────────────────────────────────────┘
+                            ↓
+┌────────────────────────────────────────────────────────────────┐
+│  Phase 2: Specification (병렬)                                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │ Client Tech  │  │   Mermaid    │  │ Interactive  │          │
+│  │  Architect   │  │   Designer   │  │   Designer   │          │
+│  │ (기술 설계)   │  │ (플로우)      │  │ (애니메이션)  │          │
+│  └──────────────┘  └──────────────┘  └──────────────┘          │
+└───────────────────────────┬────────────────────────────────────┘
+                            ↓
+┌────────────────────────────────────────────────────────────────┐
+│  Phase 3: Final (순차)                                          │
+│  ┌──────────────┐  ┌──────────────┐                            │
+│  │   Planner    │→│  Browser QA  │                            │
+│  │ (로드맵)      │  │ (QA 테스트)   │                            │
+│  └──────────────┘  └──────────────┘                            │
+└───────────────────────────┬────────────────────────────────────┘
+                            ↓
+┌────────────────────────────────────────────────────────────────┐
+│            최종 출력: .shared/ 폴더에 8개 문서                    │
+└────────────────────────────────────────────────────────────────┘
 ```
 
-## Skills
+## .shared Collaboration System
 
-### webapp-consultant
+모든 에이전트는 `.shared/` 폴더에 결과물을 저장하여 다음 에이전트에게 전달합니다.
 
-Main consulting skill that orchestrates all agents to transform vague requirements into detailed specifications.
-
-**Use when**:
-- Customer describes requirements vaguely ("I want something like...")
-- Planning HTML + Tailwind + vanilla JS web apps
-- Creating comprehensive project documentation
-- Generating technical specifications without backend
-- Creating project roadmaps with prioritization
-
-**Tech Stack**:
-- Frontend: HTML + Tailwind CSS + vanilla JavaScript
-- Storage: LocalStorage (settings) + IndexedDB via localbase (data)
-- No backend required
-
-**Example**:
 ```
-User: "I need a tool to manage my tasks"
+[target-repository]/.shared/
+├── 01-requirements.md        ← Interviewer
+├── 02-wireframes.md          ← UI Sketcher
+├── 03-ux-specification.md    ← UX Spec Writer
+├── 04-tech-architecture.md   ← Client Tech Architect
+├── 05-flow-diagrams.md       ← Mermaid Designer
+├── 06-animations.md          ← Interactive Designer
+├── 07-roadmap.md             ← Planner
+└── 08-qa-report.md           ← Browser QA
+```
 
-Assistant invokes webapp-consultant skill:
-1. Interviewer clarifies requirements
-2. UI Sketcher creates wireframes
-3. Documentation Writer creates spec
-4. Tech Researcher designs data model
-5. Mermaid Designer creates flows
-6. Interactive Designer adds animations
-7. Planner creates roadmap
+### Dependency Graph
 
-Output: Complete 20-page specification ready for development
+```
+01-requirements
+       ↓
+02-wireframes
+       ↓
+03-ux-specification
+       ↓
+    ┌──┼──┐
+    ↓  ↓  ↓
+   04 05 06  (병렬 실행)
+    └──┼──┘
+       ↓
+07-roadmap
+       ↓
+08-qa-report (실행 중인 앱 필요)
 ```
 
 ## Installation
 
-1. Clone this repository to your Claude Code plugins directory:
 ```bash
+# Claude Code 마켓플레이스에서 설치
 /plugin marketplace add Mineru98/dev-consultant
 /plugin install dev-consultant
 ```
 
-2. The plugin will be automatically detected by Claude Code on next startup.
-
 ## Usage
 
-### Using Agents Directly
+### 1. webapp-consultant 스킬 사용
 
 ```
-Use the Task tool with subagent_type parameter:
+User: "작업 관리 도구가 필요해요"
 
-Example:
-Task(
-  subagent_type="interviewer",
-  prompt="Extract requirements for a personal finance tracker",
-  description="Gather requirements"
-)
+Claude (webapp-consultant 스킬 자동 실행):
+1. Interviewer - 요구사항 명확화 질문
+2. UI Sketcher - ASCII 와이어프레임 생성
+3. UX Spec Writer - UX 명세서 작성
+4. [병렬] Client Tech Architect + Mermaid Designer + Interactive Designer
+5. Planner - 개발 로드맵 생성
+6. Browser QA - QA 테스트 (구현 후)
+
+Output: .shared/ 폴더에 8개 문서 생성
 ```
 
-### Using the webapp-consultant Skill
+### 2. 개별 에이전트 사용
 
+```javascript
+Task({
+  subagent_type: "interviewer",
+  prompt: "개인 재무 추적기 요구사항 추출",
+  description: "요구사항 수집"
+})
 ```
-Invoke the skill when planning a new web application:
-
-User: "Help me plan a todo list app"
-
-Claude automatically:
-1. Runs interviewer to clarify requirements
-2. Creates wireframes with ui-sketcher
-3. Writes specification with documentation-writer
-4. Designs data architecture with tech-researcher
-5. Creates flow diagrams with mermaid-designer
-6. Specifies animations with interactive-designer
-7. Generates roadmap with planner
-```
-
-## Features
-
-### Requirements Gathering
-- Persistent questioning patterns
-- Structured interview framework
-- Confirmation and validation
-- Problem statement extraction
-- User persona definition
-
-### Visual Design
-- ASCII wireframe generation
-- Tailwind CSS class hints
-- Responsive design notes
-- UX principle annotations (Norman, Nielsen)
-- Interaction state documentation
-
-### Technical Specification
-- User stories with acceptance criteria
-- UX philosophy integration
-- Data model design (localbase)
-- Repository pattern implementation
-- LocalStorage + IndexedDB strategy
-
-### Flow Documentation
-- Mermaid.js diagrams
-- Semantic color coding (ai-diagrams-toolkit)
-- User flow visualization
-- CRUD operation flows
-- Error handling paths
-- State machine diagrams
-
-### Animation Design
-- Tailwind animation specifications
-- Hover/focus/active states
-- Loading indicators
-- Modal/toast animations
-- Micro-interactions
-- Accessibility (reduced motion)
-
-### Project Planning
-- MoSCoW prioritization
-- RICE scoring (optional)
-- Kano model (optional)
-- Phase breakdown with deliverables
-- Work breakdown structure (WBS)
-- Critical path analysis
-- Milestone definitions
-
-## Tech Stack Support
-
-This plugin specializes in client-side web applications:
-
-### Frontend
-- HTML5
-- Tailwind CSS
-- Vanilla JavaScript (ES6+)
-
-### Storage
-- **LocalStorage**: User settings and preferences
-- **IndexedDB via localbase**: Application data
-
-### Constraints
-- No backend/server required
-- No file system API
-- Browser storage only (50MB typical limit)
-- Desktop-first, responsive design
-
-## Output
-
-Complete Markdown specification containing:
-
-1. Executive summary
-2. Requirements document
-3. ASCII wireframes
-4. Technical specification
-5. Data architecture
-6. User flow diagrams (Mermaid)
-7. Animation specifications
-8. Development roadmap
-9. Work breakdown structure
-10. Milestones and success criteria
 
 ## When to Use
 
-✅ **Use dev-consultant when**:
-- Customer has vague or unclear requirements
-- Planning a new web app from scratch
-- Need comprehensive documentation before coding
-- Want structured requirements gathering
-- Building HTML + Tailwind + vanilla JS app
-- Client-side only (no backend)
+### ✅ 사용해야 할 때
+- 고객 요청이 모호하거나 불명확할 때
+- 새 웹 앱을 처음부터 계획할 때
+- 코딩 전 포괄적인 문서가 필요할 때
+- HTML + Tailwind + 바닐라 JS 앱 구축 시
+- 클라이언트 전용 (백엔드 없음) 프로젝트
 
-❌ **Don't use when**:
-- Requirements are crystal clear
-- Building backend/server-side application
-- Need React/Vue/framework-specific planning
-- Just need quick prototype
+### ❌ 사용하지 말아야 할 때
+- 요구사항이 이미 명확할 때
+- 백엔드/서버 사이드 애플리케이션 구축 시
+- React/Vue 등 프레임워크 특화 계획 필요 시
 
-## Examples
+## Tech Stack
 
-### Example 1: Task Manager
+| 계층 | 기술 |
+|------|------|
+| Structure | HTML5 |
+| Styling | Tailwind CSS |
+| Logic | Vanilla JavaScript (ES6+) |
+| Settings | LocalStorage |
+| Data | IndexedDB (via localbase) |
+| Backend | None (client-only) |
 
-**Input**: "I need a tool to manage my tasks"
+### Constraints
+- 브라우저 스토리지 제한: ~50MB
+- 서버 동기화 없음 (로컬 전용)
+- 클라이언트 사이드 필터링 (SQL 없음)
 
-**Process**:
-1. Interviewer clarifies: Personal or team? Categories? Deadlines?
-2. UI Sketcher creates: Task list, add form, filter sidebar
-3. Documentation Writer: User stories, acceptance criteria
-4. Tech Researcher: Task collection, TaskRepository
-5. Mermaid Designer: CRUD flows, filtering logic
-6. Interactive Designer: Hover states, loading spinners
-7. Planner: Phase 1 (CRUD), Phase 2 (filters), Phase 3 (polish)
+## Final Output
 
-**Output**: 20-page specification ready for implementation
+8개의 포괄적인 Markdown 문서:
 
-### Example 2: Note Taking App
+1. **01-requirements.md** - 문제 정의, 사용자 페르소나, MoSCoW 기능 분류
+2. **02-wireframes.md** - ASCII 와이어프레임 + Tailwind 힌트
+3. **03-ux-specification.md** - 사용자 스토리, Norman/Nielsen UX 분석
+4. **04-tech-architecture.md** - 데이터 모델, Repository 클래스
+5. **05-flow-diagrams.md** - Mermaid.js 사용자 플로우
+6. **06-animations.md** - Tailwind 애니메이션 코드
+7. **07-roadmap.md** - MoSCoW 우선순위, WBS, 마일스톤
+8. **08-qa-report.md** - 테스트 결과, 발견된 이슈
 
-**Input**: "Something like Evernote but simpler"
+**총 분량**: 약 95-124 페이지의 포괄적인 프로젝트 문서
 
-**Process**:
-1. Interviewer: Which Evernote features? Rich text? Tags?
-2. UI Sketcher: Note list, editor, sidebar
-3. Documentation Writer: Editing UX, tag system spec
-4. Tech Researcher: Note collection, Tag collection
-5. Mermaid Designer: Note creation flow, tag management
-6. Interactive Designer: Editor interactions, tag animations
-7. Planner: MVP (basic notes) → Enhanced (tags, search)
+## Example
 
-**Output**: Complete specification with realistic timeline
+### Input
+```
+"작업 관리 도구가 필요해요"
+```
 
-## Contributing
+### Process
+```
+[1] Interviewer
+    Q: "개인용인가요, 팀용인가요?"
+    Q: "카테고리나 마감일이 필요한가요?"
+    → 01-requirements.md
 
-Contributions welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+[2] UI Sketcher
+    - 작업 목록, 추가 양식, 필터 와이어프레임
+    → 02-wireframes.md
 
-## License
+[3] UX Spec Writer
+    - 사용자 스토리, UX 분석
+    → 03-ux-specification.md
 
-See [LICENSE](LICENSE) file for details.
+[4-6] 병렬 실행
+    - Tech: Task 컬렉션, TaskRepository
+    - Mermaid: CRUD 플로우
+    - Interactive: hover, spinner
+    → 04, 05, 06.md
 
-## Support
+[7] Planner
+    - Phase 1 (CRUD), Phase 2 (필터), Phase 3 (폴리시)
+    → 07-roadmap.md
 
-For issues, questions, or feature requests, please open an issue on GitHub.
+[8] Browser QA
+    - 기능, UI, 접근성 테스트
+    → 08-qa-report.md
+```
+
+### Output
+`.shared/` 폴더에 8개의 문서 → 즉시 개발 시작 가능
+
+## References
+
+| Task | Reference File |
+|------|----------------|
+| 전체 프로세스 | `references/workflow.md` |
+| 에이전트 협업 | `references/shared-folder-spec.md` |
+| 공통 도구 | `references/common-agent-tools.md` |
+| 상세 가이드 | `references/skill-detailed-guide.md` |
+| 사용 예제 | `references/skill-usage-examples.md` |
+| 인터뷰 패턴 | `references/interview-patterns.md` |
+| ASCII 가이드 | `references/ascii-art-guide.md` |
+| UX 철학 | `references/ux-philosophy.md` |
+| localbase API | `references/localbase-guide.md` |
+| Mermaid 패턴 | `references/mermaid-patterns.md` |
+| 애니메이션 | `references/tailwind-animations.md` |
+| 계획 방법론 | `references/planning-methods.md` |
+| 기술 스택 | `references/spa-tech-stacks.md` |
 
 ## Credits
 
-Created for Claude Code plugin ecosystem.
-
-**Reference Materials**:
 - Norman, Don. "The Design of Everyday Things"
 - Nielsen, Jakob. "Usability Heuristics"
 - ai-diagrams-toolkit (Mermaid patterns)
 - localbase (IndexedDB wrapper)
 
+## License
+
+GPL-3.0 - See [LICENSE](LICENSE) file
+
 ## Version
 
-Current version: 1.0.0
+Current version: 1.1.0
